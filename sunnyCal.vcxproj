@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="CIUnkown.cpp" />
     <ClCompile Include="iface.cpp" />
+    <ClCompile Include="Refcount.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
