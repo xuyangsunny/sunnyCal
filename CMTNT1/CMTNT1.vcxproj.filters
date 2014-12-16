@@ -15,34 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="iface.cpp">
+    <ClInclude Include="..\iface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\guids.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CIUnkown.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Refcount.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="client1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="create.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="guids.cpp">
+    <ClCompile Include="CMTNT1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sunny.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="iface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="create.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <None Include="CMTNT1.def">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

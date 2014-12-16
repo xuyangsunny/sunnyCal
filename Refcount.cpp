@@ -9,6 +9,8 @@
 
 	purpose:	主要是来学习com组件
 *********************************************************************/
+#include "sunny.h"
+#ifdef SUNNY2
 #include <iostream>
 #include <objbase.h>
 #include <math.h>
@@ -304,3 +306,4 @@ int main()
     system("pause");
     return 0;
 }
+#endif
