@@ -44,7 +44,7 @@ int main()
 			PICalStd->Release();
         }
 
-    ICalSup* PICalSup = NULL;
+  /*  ICalSup* PICalSup = NULL;
 	 hr=pICalBase->QueryInterface(IID_CALSUP, (void**)&PICalSup);
 
     if (SUCCEEDED(hr))
@@ -52,7 +52,7 @@ int main()
             res = PICalSup->Fib(10);
             PICalSup->Sort(array, 10);
 			PICalSup->Release();
-        }
+        }*/
 	pICalBase->Release();
 	CoUninitialize();
     system("pause");
