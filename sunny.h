@@ -1,1 +1,1 @@
-#define SUNNY5
+#define SUNNY4
