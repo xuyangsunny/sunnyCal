@@ -80,27 +80,26 @@ interface ICalStd : public IUnknown
 
 };
 
-//interface ICalSup :public IUnknown
-//{
-//    //************************************
-//    // Method:    Sort
-//    // FullName:  ICalSup::Sort
-//    // Access:    virtual public
-//    // Returns:   void
-//    // Qualifier: 对于一个int数组排序
-//    // Parameter: int * pArray
-//    // Parameter: int n int数组的个数
-//    //************************************
-//    virtual void Sort(int* pArray, int n) = 0;
-//    //************************************
-//    // Method:    Fib
-//    // FullName:  ICalSup::Fib
-//    // Access:    virtual public
-//    // Returns:   int
-//    // Qualifier: 求取费波拉契数
-//    // Parameter: int n 第几个 费波拉契数 大于0
-//    //************************************
-//    virtual int Fib(int n) = 0;
-//};
-
+interface ICalSup :public IUnknown
+{
+    //************************************
+    // Method:    Sort
+    // FullName:  ICalSup::Sort
+    // Access:    virtual public
+    // Returns:   void
+    // Qualifier: 对于一个int数组排序
+    // Parameter: int * pArray
+    // Parameter: int n int数组的个数
+    //************************************
+    virtual void Sort(int* pArray, int n) = 0;
+    //************************************
+    // Method:    Fib
+    // FullName:  ICalSup::Fib
+    // Access:    virtual public
+    // Returns:   int
+    // Qualifier: 求取费波拉契数
+    // Parameter: int n 第几个 费波拉契数 大于0
+    //************************************
+    virtual int Fib(int n) = 0;
+};
 extern "C" const CLSID CLSID_COMP1;

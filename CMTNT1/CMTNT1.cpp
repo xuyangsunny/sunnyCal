@@ -21,7 +21,7 @@ void trace(char* msg)
             std::cout << msg << std::endl;
         }
 }
-class MyCal: public ICalBase, public ICalStd/*, public ICalSup*/
+class MyCal: public ICalBase, public ICalStd, public ICalSup
 {
 public:
     MyCal();
@@ -115,12 +115,12 @@ public:
             {
                 *ppvObject = static_cast<ICalStd* >(this);
             }
-      /*  else if (riid == IID_CALSUP)
+        else if (riid == IID_CALSUP)
             {
                *ppvObject = static_cast<ICalSup* >(this);
 				//  *ppvObject = NULL;
                // return E_NOINTERFACE;
-            }*/
+            }
         else
             {
                 *ppvObject = NULL;
