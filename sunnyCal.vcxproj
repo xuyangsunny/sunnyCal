@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="CIUnkown.cpp" />
     <ClCompile Include="client1.cpp" />
+    <ClCompile Include="client2.cpp" />
     <ClCompile Include="create.cpp" />
     <ClCompile Include="guids.cpp" />
     <ClCompile Include="iface.cpp" />

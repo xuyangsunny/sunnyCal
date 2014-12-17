@@ -102,3 +102,4 @@ interface ICalSup :public IUnknown
     //************************************
     virtual int Fib(int n) = 0;
 };
+extern "C" const CLSID CLSID_COMP1;

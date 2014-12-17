@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sunnyCal", "sunnyCal.vcxproj", "{5AEA03FD-EA5A-45BA-B678-B5E51F3EF085}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMTNT1", "CMTNT1\CMTNT1.vcxproj", "{C69D0FD5-6C91-413D-BEB5-0F76A585C421}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AEA03FD-EA5A-45BA-B678-B5E51F3EF085}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5AEA03FD-EA5A-45BA-B678-B5E51F3EF085}.Debug|Win32.Build.0 = Debug|Win32
+		{5AEA03FD-EA5A-45BA-B678-B5E51F3EF085}.Release|Win32.ActiveCfg = Release|Win32
+		{5AEA03FD-EA5A-45BA-B678-B5E51F3EF085}.Release|Win32.Build.0 = Release|Win32
+		{C69D0FD5-6C91-413D-BEB5-0F76A585C421}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C69D0FD5-6C91-413D-BEB5-0F76A585C421}.Debug|Win32.Build.0 = Debug|Win32
+		{C69D0FD5-6C91-413D-BEB5-0F76A585C421}.Release|Win32.ActiveCfg = Release|Win32
+		{C69D0FD5-6C91-413D-BEB5-0F76A585C421}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
