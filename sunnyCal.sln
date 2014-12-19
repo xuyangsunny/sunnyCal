@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sunnyCal", "sunnyCal.vcxproj", "{5AEA03FD-EA5A-45BA-B678-B5E51F3EF085}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CMTNT1", "CMTNT1\CMTNT1.vcxproj", "{C69D0FD5-6C91-413D-BEB5-0F76A585C421}"
