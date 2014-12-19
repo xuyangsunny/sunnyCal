@@ -50,7 +50,7 @@ int main()
     if ( SUCCEEDED ( hr ) )
     {
         res = PICalSup->Fib ( 10 );
-       // PICalSup->Sort ( array, 10 );
+        PICalSup->Sort ( array, 10 );
         PICalSup->Release();
     }
     
