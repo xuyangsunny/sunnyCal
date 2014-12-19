@@ -52,25 +52,16 @@ class MyCal: public ICalBase, public ICalStd
         }
         virtual int Sqrt ( int a )    //throw std::exception("The method or operation is not implemented.");
         {
-            cout << "sqrt :" << ( int ) sqrt ( double ( a ) ) << endl;
-            return ( int ) sqrt ( double ( a ) );
+            return m_pICalStd->Sqrt ( a );
         }
         
         virtual int Sum ( int n )    //throw std::exception("The method or operation is not implemented.");
         {
-            int sum = 0;
-            
-            for ( int i = 0; i < n; ++i )
-            {
-                sum += i;
-            }
-            
-            cout << "sum : " << sum << endl;
-            return sum;
+            return m_pICalStd->Sum ( n );
         }
         
         
-        
+        HRESULT STDMETHODCALLTYPE Init();
         
         virtual HRESULT STDMETHODCALLTYPE QueryInterface ( REFIID riid, void** ppvObject )
         {
@@ -125,13 +116,14 @@ class MyCal: public ICalBase, public ICalStd
         
     private:
         long m_ref;
+        ICalStd* m_pICalStd;
         
 };
 
 
 
 
-MyCal::MyCal() : m_ref ( 1 )
+MyCal::MyCal() : m_ref ( 1 ), m_pICalStd ( NULL )
 {
     InterlockedIncrement ( &g_cComponents );
 }
@@ -139,7 +131,31 @@ MyCal::MyCal() : m_ref ( 1 )
 MyCal::~MyCal()
 {
     InterlockedDecrement ( &g_cComponents );
+    
+    if ( m_pICalStd != NULL )
+    {
+        //delete m_pICalStd;
+		m_pICalStd->Release();
+    }
+    
     trace ( "destroy mycal" );
+}
+
+HRESULT STDMETHODCALLTYPE MyCal:: Init()
+{
+    HRESULT hr;
+    hr =::CoCreateInstance ( CLSID_COMT2, NULL, CLSCTX_INPROC_SERVER, IID_CALSTD, ( LPVOID* ) &m_pICalStd );
+    
+    if ( FAILED ( hr ) )
+    {
+        trace ( "con not create contained comp" );
+        return E_FAIL;
+    }
+    
+    else
+    {
+        return S_OK;
+    }
 }
 
 class CFactory: public IClassFactory
@@ -192,6 +208,14 @@ HRESULT __stdcall CFactory::  CreateInstance ( IUnknown* pUnknownOuter,
     if ( pMyCal == NULL )
     {
         return E_OUTOFMEMORY;
+    }
+    
+    hr = pMyCal->Init();
+    
+    if ( FAILED ( hr ) )
+    {
+        pMyCal->Release();
+        return hr;
     }
     
     hr = pMyCal->QueryInterface ( iid, ppv );
