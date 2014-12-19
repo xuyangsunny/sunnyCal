@@ -17,7 +17,7 @@ int main()
     int res = 0;
     int array[10] = {3, 34, 45, 22, 44, 432, 22, 75, 43, 21 };
     ICalBase* pICalBase = NULL;
-    hr =::CoCreateInstance ( CLSID_COMP1, NULL, CLSCTX_INPROC_SERVER, IID_CALBASE, ( LPVOID* ) &pICalBase );
+    hr =::CoCreateInstance ( CLSID_COMT12, NULL, CLSCTX_INPROC_SERVER, IID_CALBASE, ( LPVOID* ) &pICalBase );
     
     
     if ( SUCCEEDED ( hr ) )

@@ -1,3 +1,15 @@
+
+/********************************************************************
+	created:	2014/12/19
+	created:	19:12:2014   20:55
+	filename: 	\\psf\Home\Documents\Visual Studio 2010\Projects\sunnyCal\COMT2\comt2.cpp
+	file path:	\\psf\Home\Documents\Visual Studio 2010\Projects\sunnyCal\COMT2
+	file base:	comt2
+	file ext:	cpp
+	author:		xuyang
+
+	purpose:这个文件主要是组件1，其中只有接口 ICalStd
+*********************************************************************/
 #include <iostream>
 #include <objbase.h>
 #include "iface.h"
@@ -5,12 +17,12 @@
 using namespace std;
 static HMODULE  g_hModule = NULL;
 // Friendly name of component
-const char g_szFriendlyName[] = "gszFriendlyName,CMTNT1";
+const char g_szFriendlyName[] = "gszCOMT2CalBaseOnly,COMT2";
 // Version-independent ProgID
-const char g_szVerIndProgID[] = "gszVerIndProgID.CMTNT1" ;
+const char g_szVerIndProgID[] = "gszCOMT2VerIndProgID.COMT2" ;
 
 // ProgID
-const char g_szProgID[] = "gszProgID.CMTNT1.1" ;
+const char g_szProgID[] = "gszCOMT2ProgID.COMT2.1" ;
 
 static long  g_cComponents = 0;
 static long  g_cServeLock = 0;
@@ -21,109 +33,46 @@ void trace ( char* msg )
         std::cout << msg << std::endl;
     }
 }
-class MyCal: public ICalBase, public ICalStd, public ICalSup
+class MyCal: public ICalStd
 {
     public:
         MyCal();
         ~MyCal();
         
-        virtual int Add ( int a, int b )   //throw std::exception("The method or operation is not implemented.");
-        {
-            cout << "ADD :" << a + b << endl;
-            return a + b;
-        }
+		virtual int Sqrt ( int a )    //throw std::exception("The method or operation is not implemented.");
+		{
+			cout << "sqrt :" << ( int ) sqrt ( double ( a ) ) << endl;
+			return ( int ) sqrt ( double ( a ) );
+		}
+
+		virtual int Sum ( int n )    //throw std::exception("The method or operation is not implemented.");
+		{
+			int sum = 0;
+
+			for ( int i = 0; i < n; ++i )
+			{
+				sum += i;
+			}
+
+			cout << "sum : " << sum << endl;
+			return sum;
+		}
         
-        virtual int Mul ( int a, int b )   //throw std::exception("The method or operation is not implemented.");
-        {
-            cout << "a*b :" << a* b << endl;
-            return a * b;
-        }
         
-        virtual int Sqrt ( int a )    //throw std::exception("The method or operation is not implemented.");
-        {
-            cout << "sqrt :" << ( int ) sqrt ( double ( a ) ) << endl;
-            return ( int ) sqrt ( double ( a ) );
-        }
         
-        virtual int Sum ( int n )    //throw std::exception("The method or operation is not implemented.");
-        {
-            int sum = 0;
-            
-            for ( int i = 0; i < n; ++i )
-            {
-                sum += i;
-            }
-            
-            cout << "sum : " << sum << endl;
-            return sum;
-        }
         
-        virtual void Sort ( int* pArray, int n )   //throw std::exception("The method or operation is not implemented.");
-        {
-            if ( pArray == NULL )
-            {
-                return;
-            }
-            
-            for ( int i = 0; i < n; ++i )
-            {
-                for ( int j = 0; j < n - i - 1; ++j )
-                {
-                    if ( pArray[j + 1] < pArray[j] )
-                    {
-                        int temp = pArray[j];
-                        pArray[j] = pArray[j + 1];
-                        pArray[j + 1] = temp;
-                    }
-                }
-            }
-            
-            for ( int i = 0; i < n; i++ )
-            {
-                cout << pArray[i] << " ";
-            }
-            
-            cout << endl;
-        }
-        
-        virtual int Fib ( int n )    //throw std::exception("The method or operation is not implemented.");
-        {
-            int first = 1;
-            int second = 1;
-            int res = 1;
-            
-            for ( int i = 2; i < n; ++i )
-            {
-                res = first + second;
-                first = second;
-                second = res;
-            }
-            
-            cout << "fib: " << res << endl;
-            return res;
-        }
         
         virtual HRESULT STDMETHODCALLTYPE QueryInterface ( REFIID riid, void** ppvObject )
         {
             //throw std::exception("The method or operation is not implemented.");
             if ( riid == IID_IUnknown )
             {
-                *ppvObject = static_cast<ICalBase* > ( this );
-            }
-            
-            else if ( riid == IID_CALBASE )
-            {
-                *ppvObject = static_cast<ICalBase* > ( this );
+                *ppvObject = static_cast<ICalStd* > ( this );
             }
             
             else if ( riid == IID_CALSTD )
             {
                 *ppvObject = static_cast<ICalStd* > ( this );
-            }
-            
-            else if ( riid == IID_CALSUP )
-            {
-                *ppvObject = static_cast<ICalSup* > ( this );
             }
             
             else
@@ -165,12 +114,7 @@ class MyCal: public ICalBase, public ICalStd, public ICalSup
 };
 
 
-extern "C" IUnknown* CreateInstance()
-{
-    IUnknown* pI = static_cast<ICalBase*> ( new MyCal );
-    //pI->AddRef();
-    return pI;
-}
+
 
 MyCal::MyCal() : m_ref ( 1 )
 {
@@ -227,16 +171,16 @@ HRESULT __stdcall CFactory::  CreateInstance ( IUnknown* pUnknownOuter,
     {
         return CLASS_E_NOAGGREGATION;
     }
-    
-    MyCal* pMyCal = new MyCal;
-    
-    if ( pMyCal == NULL )
-    {
-        return E_OUTOFMEMORY;
-    }
-    
-    hr = pMyCal->QueryInterface ( iid, ppv );
-    pMyCal->Release();
+
+	MyCal* pMyCal = new MyCal;
+
+	if ( pMyCal == NULL )
+	{
+		return E_OUTOFMEMORY;
+	}
+
+	hr = pMyCal->QueryInterface ( iid, ppv );
+	pMyCal->Release();
     return hr;
 }
 HRESULT __stdcall CFactory:: QueryInterface ( const IID& riid, void** ppvObject )
@@ -282,7 +226,7 @@ STDAPI DllGetClassObject ( const CLSID& clsid,
                            const IID& iid,
                            void** ppv )
 {
-    if ( clsid != CLSID_COMP1 )
+    if ( clsid != CLSID_COMT2 )
     {
         return CLASS_E_CLASSNOTAVAILABLE;
     }
@@ -301,12 +245,12 @@ STDAPI DllGetClassObject ( const CLSID& clsid,
 }
 STDAPI DllRegisterServer()
 {
-    return RegisterServer ( g_hModule, CLSID_COMP1, g_szFriendlyName, g_szVerIndProgID, g_szProgID );
+    return RegisterServer ( g_hModule, CLSID_COMT2, g_szFriendlyName, g_szVerIndProgID, g_szProgID );
 }
 
 STDAPI DllUnregisterServer()
 {
-    return UnregisterServer ( CLSID_COMP1, g_szVerIndProgID, g_szProgID );
+    return UnregisterServer ( CLSID_COMT2, g_szVerIndProgID, g_szProgID );
 }
 
 STDAPI DllCanUnloadNow()
