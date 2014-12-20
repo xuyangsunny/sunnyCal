@@ -15,6 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="comt13.def">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="COMT13.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="..\CMTNT1\REGISTRY.CPP">
       <Filter>源文件</Filter>
     </ClCompile>

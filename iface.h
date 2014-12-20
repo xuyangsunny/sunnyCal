@@ -107,3 +107,5 @@ extern "C" const CLSID CLSID_COMT1;
 extern "C" const CLSID CLSID_COMT2;
 extern "C" const CLSID CLSID_COMT12;
 extern "C" const CLSID CLSID_COMT123;
+extern "C" const CLSID CLSID_COMT13;
+extern "C" const CLSID CLSID_COMT3;

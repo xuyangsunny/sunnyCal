@@ -1,14 +1,19 @@
+// COMT13.cpp : 定义 DLL 应用程序的导出函数。
+//
+
+
+
 
 /********************************************************************
 	created:	2014/12/19
 	created:	19:12:2014   20:55
-	filename: 	\\psf\Home\Documents\Visual Studio 2010\Projects\sunnyCal\COMT2\comt2.cpp
-	file path:	\\psf\Home\Documents\Visual Studio 2010\Projects\sunnyCal\COMT2
-	file base:	comt2
+	filename: 	\\psf\Home\Documents\Visual Studio 2010\Projects\sunnyCal\COMT13\comt13.cpp
+	file path:	\\psf\Home\Documents\Visual Studio 2010\Projects\sunnyCal\COMT13
+	file base:	comt13
 	file ext:	cpp
 	author:		xuyang
 
-	purpose:这个文件主要是组件1，其中只有接口 ICalStd
+	purpose:这个文件主要是组件13，其中只有接口 ICalBase和ICalSup
 *********************************************************************/
 #include <iostream>
 #include <objbase.h>
@@ -17,12 +22,12 @@
 using namespace std;
 static HMODULE  g_hModule = NULL;
 // Friendly name of component
-const char g_szFriendlyName[] = "gszCOMT2CalStd Only,COMT2";
+const char g_szFriendlyName[] = "gszCOMT134CalBaseAndCalSupOnly,COMT13";
 // Version-independent ProgID
-const char g_szVerIndProgID[] = "gszCOMT2VerIndProgID.COMT2" ;
+const char g_szVerIndProgID[] = "gszCOMT134VerIndProgID.COMT13" ;
 
 // ProgID
-const char g_szProgID[] = "gszCOMT2ProgID.COMT2.1" ;
+const char g_szProgID[] = "gszCOMT134ProgID.COMT13.1" ;
 
 static long  g_cComponents = 0;
 static long  g_cServeLock = 0;
@@ -33,46 +38,77 @@ void trace ( char* msg )
         std::cout << msg << std::endl;
     }
 }
-class MyCal: public ICalStd
+class MyCal: public ICalSup
 {
     public:
         MyCal();
         ~MyCal();
         
-		virtual int Sqrt ( int a )    //throw std::exception("The method or operation is not implemented.");
+      
+		virtual void Sort ( int* pArray, int n )   //throw std::exception("The method or operation is not implemented.");
 		{
-			cout << "sqrt :" << ( int ) sqrt ( double ( a ) ) << endl;
-			return ( int ) sqrt ( double ( a ) );
-		}
-
-		virtual int Sum ( int n )    //throw std::exception("The method or operation is not implemented.");
-		{
-			int sum = 0;
+			if ( pArray == NULL )
+			{
+				return;
+			}
 
 			for ( int i = 0; i < n; ++i )
 			{
-				sum += i;
+				for ( int j = 0; j < n - i - 1; ++j )
+				{
+					if ( pArray[j + 1] < pArray[j] )
+					{
+						int temp = pArray[j];
+						pArray[j] = pArray[j + 1];
+						pArray[j + 1] = temp;
+					}
+				}
 			}
 
-			cout << "sum : " << sum << endl;
-			return sum;
+			for ( int i = 0; i < n; i++ )
+			{
+				cout << pArray[i] << " ";
+			}
+
+			cout << endl;
 		}
+
+		virtual int Fib ( int n )    //throw std::exception("The method or operation is not implemented.");
+		{
+			int first = 1;
+			int second = 1;
+			int res = 1;
+
+			for ( int i = 2; i < n; ++i )
+			{
+				res = first + second;
+				first = second;
+				second = res;
+			}
+
+			cout << "fib: " << res << endl;
+			return res;
+		}
+
         
-        
-        
-        
+        HRESULT STDMETHODCALLTYPE Init();
         
         virtual HRESULT STDMETHODCALLTYPE QueryInterface ( REFIID riid, void** ppvObject )
         {
             //throw std::exception("The method or operation is not implemented.");
             if ( riid == IID_IUnknown )
             {
-                *ppvObject = static_cast<ICalStd* > ( this );
+                *ppvObject = static_cast<ICalSup* > ( this );
             }
             
-            else if ( riid == IID_CALSTD )
+            else if ( riid == IID_CALBASE )
             {
-                *ppvObject = static_cast<ICalStd* > ( this );
+                return m_pUnknownInner->QueryInterface(riid,ppvObject);
+            }
+            
+            else if ( riid == IID_CALSUP )
+            {
+                *ppvObject = static_cast<ICalSup * > ( this );
             }
             
             else
@@ -110,13 +146,15 @@ class MyCal: public ICalStd
         
     private:
         long m_ref;
+        //ICalBase* m_pICalBase;
+		IUnknown * m_pUnknownInner;
         
 };
 
 
 
 
-MyCal::MyCal() : m_ref ( 1 )
+MyCal::MyCal() : m_ref ( 1 ), /*m_pICalBase ( NULL ),*/m_pUnknownInner(NULL)
 {
     InterlockedIncrement ( &g_cComponents );
 }
@@ -124,7 +162,51 @@ MyCal::MyCal() : m_ref ( 1 )
 MyCal::~MyCal()
 {
     InterlockedDecrement ( &g_cComponents );
-    trace ( "destroy mycal" );
+	//m_ref=1;
+	// Counter the pUnknownOuter->Release in the Init method.
+	//IUnknown* pUnknownOuter = this ;
+	//pUnknownOuter->AddRef() ;
+	/*
+    if ( m_pICalBase != NULL )
+    {
+        //delete m_pICalStd;
+		m_pICalBase->Release();
+    }
+	*/
+	if (m_pUnknownInner!=NULL)
+	{
+		m_pUnknownInner->Release();
+	}
+    
+    trace ( "destroy mycal~13" );
+}
+
+HRESULT STDMETHODCALLTYPE MyCal:: Init()
+{
+    HRESULT hr;
+	IUnknown * m_pUnknownOuter=reinterpret_cast<IUnknown *>(this);
+    hr =::CoCreateInstance ( CLSID_COMT12, m_pUnknownOuter, CLSCTX_INPROC_SERVER, IID_IUnknown, ( LPVOID* ) &m_pUnknownInner );
+    
+    if ( FAILED ( hr ) )
+    {
+        trace ( "con not create acc comp" );
+        return E_FAIL;
+    }
+    
+    else
+    {
+		/*
+		hr=m_pUnknownInner->QueryInterface(IID_CALBASE,(void **)&m_pICalBase);
+		if ( FAILED ( hr ) )
+		{
+			trace ( "con not create acc2 comp" );
+			m_pUnknownInner->Release();
+			return E_FAIL;
+		}
+		*/
+		//m_pUnknownOuter->Release();
+        return S_OK;
+    }
 }
 
 class CFactory: public IClassFactory
@@ -171,16 +253,24 @@ HRESULT __stdcall CFactory::  CreateInstance ( IUnknown* pUnknownOuter,
     {
         return CLASS_E_NOAGGREGATION;
     }
-
-	MyCal* pMyCal = new MyCal;
-
-	if ( pMyCal == NULL )
-	{
-		return E_OUTOFMEMORY;
-	}
-
-	hr = pMyCal->QueryInterface ( iid, ppv );
-	pMyCal->Release();
+    
+    MyCal* pMyCal = new MyCal;
+    
+    if ( pMyCal == NULL )
+    {
+        return E_OUTOFMEMORY;
+    }
+    
+    hr = pMyCal->Init();
+    
+    if ( FAILED ( hr ) )
+    {
+        pMyCal->Release();
+        return hr;
+    }
+    
+    hr = pMyCal->QueryInterface ( iid, ppv );
+    pMyCal->Release();
     return hr;
 }
 HRESULT __stdcall CFactory:: QueryInterface ( const IID& riid, void** ppvObject )
@@ -226,7 +316,7 @@ STDAPI DllGetClassObject ( const CLSID& clsid,
                            const IID& iid,
                            void** ppv )
 {
-    if ( clsid != CLSID_COMT2 )
+    if ( clsid != CLSID_COMT13 )
     {
         return CLASS_E_CLASSNOTAVAILABLE;
     }
@@ -245,12 +335,12 @@ STDAPI DllGetClassObject ( const CLSID& clsid,
 }
 STDAPI DllRegisterServer()
 {
-    return RegisterServer ( g_hModule, CLSID_COMT2, g_szFriendlyName, g_szVerIndProgID, g_szProgID );
+    return RegisterServer ( g_hModule, CLSID_COMT13, g_szFriendlyName, g_szVerIndProgID, g_szProgID );
 }
 
 STDAPI DllUnregisterServer()
 {
-    return UnregisterServer ( CLSID_COMT2, g_szVerIndProgID, g_szProgID );
+    return UnregisterServer ( CLSID_COMT13, g_szVerIndProgID, g_szProgID );
 }
 
 STDAPI DllCanUnloadNow()

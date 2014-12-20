@@ -26,6 +26,13 @@ const char g_szProgID[] = "gszCOMT12ProgID.COMT12.1" ;
 
 static long  g_cComponents = 0;
 static long  g_cServeLock = 0;
+struct INonDelegatingUnknown
+{
+    virtual HRESULT __stdcall NonDelegatingQueryInterface ( REFIID riid, void** ppvObject ) = 0; 
+    virtual ULONG   __stdcall NonDelegatingAddRef() = 0;
+	virtual ULONG __stdcall NonDelegatingRelease ( void ) = 0;
+};
+
 void trace ( char* msg )
 {
     if ( msg != NULL )
@@ -33,10 +40,10 @@ void trace ( char* msg )
         std::cout << msg << std::endl;
     }
 }
-class MyCal: public ICalBase, public ICalStd
+class MyCal: public ICalBase, public ICalStd, public INonDelegatingUnknown
 {
     public:
-        MyCal();
+        MyCal ( IUnknown* pUnknownOuter );
         ~MyCal();
         
         virtual int Add ( int a, int b )   //throw std::exception("The method or operation is not implemented.");
@@ -45,17 +52,17 @@ class MyCal: public ICalBase, public ICalStd
             return a + b;
         }
         
-        virtual int Mul ( int a, int b )   //throw std::exception("The method or operation is not implemented.");
+        virtual int Mul ( int a, int b )   
         {
             cout << "a*b :" << a* b << endl;
             return a * b;
         }
-        virtual int Sqrt ( int a )    //throw std::exception("The method or operation is not implemented.");
+        virtual int Sqrt ( int a )   
         {
             return m_pICalStd->Sqrt ( a );
         }
         
-        virtual int Sum ( int n )    //throw std::exception("The method or operation is not implemented.");
+        virtual int Sum ( int n )   
         {
             return m_pICalStd->Sum ( n );
         }
@@ -65,80 +72,106 @@ class MyCal: public ICalBase, public ICalStd
         
         virtual HRESULT STDMETHODCALLTYPE QueryInterface ( REFIID riid, void** ppvObject )
         {
-            //throw std::exception("The method or operation is not implemented.");
-            if ( riid == IID_IUnknown )
-            {
-                *ppvObject = static_cast<ICalBase* > ( this );
-            }
-            
-            else if ( riid == IID_CALBASE )
-            {
-                *ppvObject = static_cast<ICalBase* > ( this );
-            }
-            
-            else if ( riid == IID_CALSTD )
-            {
-                *ppvObject = static_cast<ICalStd* > ( this );
-            }
-            
-            else
-            {
-                *ppvObject = NULL;
-                return E_NOINTERFACE;
-            }
-            
-            reinterpret_cast<IUnknown*> ( *ppvObject )->AddRef();
-            
-            return S_OK;
+			return m_pUnknownOuter->QueryInterface(riid,ppvObject);
         }
         
         virtual ULONG STDMETHODCALLTYPE AddRef ( void )
         {
-            //throw std::exception("The method or operation is not implemented.");
-            cout << "MyCal AddRef: " << m_ref + 1 << endl;
-            return InterlockedIncrement ( &m_ref );
-            // return 0;
+            return m_pUnknownOuter->AddRef();
         }
         
         virtual ULONG STDMETHODCALLTYPE Release ( void )
         {
             //throw std::exception("The method or operation is not implemented.");
-            cout << "MyCal Release :" << m_ref - 1 << endl;
-            
-            if ( InterlockedDecrement ( &m_ref ) == 0 )
-            {
-                delete this;
-            }
-            
-            return m_ref;
-            //  return 0;
+            return m_pUnknownOuter->Release();
         }
+        
+        virtual HRESULT __stdcall NonDelegatingQueryInterface ( REFIID riid, void** ppvObject ) ;
+		virtual ULONG   __stdcall NonDelegatingAddRef() ;
+        virtual ULONG __stdcall NonDelegatingRelease ( void ) ;
+        
         
     private:
         long m_ref;
-        ICalStd* m_pICalStd;
+        ICalStd* m_pICalStd;//包含时使用的内部指针
+        IUnknown* m_pUnknownOuter;//聚合时使用的指针，如果为非聚合状态，则是Iunknown包装的 InonDelegate指针
         
 };
 
+HRESULT __stdcall MyCal:: NonDelegatingQueryInterface ( REFIID riid, void** ppvObject )//直接选文函数  返回的是 INonDelegatingUnknown ref自己这边加，如果是其他，ref加在外面
+{
+    //throw std::exception("The method or operation is not implemented.");
+    if ( riid == IID_IUnknown )
+    {
+        *ppvObject = static_cast< INonDelegatingUnknown* > ( this );
+    }
+    
+    else if ( riid == IID_CALBASE )
+    {
+        *ppvObject = static_cast<ICalBase* > ( this );
+    }
+    
+    else if ( riid == IID_CALSTD )
+    {
+        *ppvObject = static_cast<ICalStd* > ( this );
+    }
+    
+    else
+    {
+        *ppvObject = NULL;
+        return E_NOINTERFACE;
+    }
+    
+    reinterpret_cast<IUnknown*> ( *ppvObject )->AddRef();
+    
+    return S_OK;
+}
+ULONG __stdcall MyCal::  NonDelegatingRelease ( void )
+{
+    cout << "MyCal Release :" << m_ref - 1 << endl;
+    
+    if ( InterlockedDecrement ( &m_ref ) == 0 )
+    {
+        delete this;
+    }
+    
+    return m_ref;
+    //  return 0;
+}
+ULONG   __stdcall MyCal:: NonDelegatingAddRef()
+{
+    cout << "MyCal AddRef: " << m_ref + 1 << endl;
+    return InterlockedIncrement ( &m_ref );
+}
 
 
-
-MyCal::MyCal() : m_ref ( 1 ), m_pICalStd ( NULL )
+MyCal::MyCal ( IUnknown* pUnknownOuter ) : m_ref ( 1 ), m_pICalStd ( NULL )
 {
     InterlockedIncrement ( &g_cComponents );
+	//初始化 pUnknownOuter
+	if(pUnknownOuter==NULL)
+	{
+		trace("non delegate");
+		m_pUnknownOuter=reinterpret_cast<IUnknown*>(static_cast<INonDelegatingUnknown *>(this));//这句很重要需要琢磨
+	}
+	else
+	{
+		trace("delegate ");
+		m_pUnknownOuter=pUnknownOuter;
+	}
 }
 
 MyCal::~MyCal()
 {
     InterlockedDecrement ( &g_cComponents );
     
-    if ( m_pICalStd != NULL )
+    if ( m_pICalStd != NULL )//包含指针 需要调用release
     {
-        //delete m_pICalStd;
-		m_pICalStd->Release();
+        
+        m_pICalStd->Release();
     }
     
-    trace ( "destroy mycal" );
+    trace ( "destroy mycal12" );
 }
 
 HRESULT STDMETHODCALLTYPE MyCal:: Init()
@@ -198,12 +231,12 @@ HRESULT __stdcall CFactory::  CreateInstance ( IUnknown* pUnknownOuter,
 {
     HRESULT hr;
     
-    if ( pUnknownOuter != NULL )
+    if ( pUnknownOuter != NULL && iid != IID_IUnknown )//聚合申请的是 IID_IUnknown
     {
         return CLASS_E_NOAGGREGATION;
     }
     
-    MyCal* pMyCal = new MyCal;
+    MyCal* pMyCal = new MyCal ( pUnknownOuter );
     
     if ( pMyCal == NULL )
     {
@@ -214,12 +247,12 @@ HRESULT __stdcall CFactory::  CreateInstance ( IUnknown* pUnknownOuter,
     
     if ( FAILED ( hr ) )
     {
-        pMyCal->Release();
+        pMyCal->NonDelegatingRelease();
         return hr;
     }
     
-    hr = pMyCal->QueryInterface ( iid, ppv );
-    pMyCal->Release();
+    hr = pMyCal->NonDelegatingQueryInterface ( iid, ppv );
+    pMyCal->NonDelegatingRelease();
     return hr;
 }
 HRESULT __stdcall CFactory:: QueryInterface ( const IID& riid, void** ppvObject )

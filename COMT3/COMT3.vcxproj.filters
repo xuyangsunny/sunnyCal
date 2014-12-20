@@ -21,6 +21,9 @@
     <ClCompile Include="..\guids.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="comt3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CMTNT1\REGISTRY.H">
@@ -29,5 +32,10 @@
     <ClInclude Include="..\iface.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="comt3.def">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
