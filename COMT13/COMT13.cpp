@@ -146,7 +146,7 @@ class MyCal: public ICalSup
         
     private:
         long m_ref;
-        //ICalBase* m_pICalBase;
+        ICalBase* m_pICalBase;
 		IUnknown * m_pUnknownInner;
         
 };
@@ -154,7 +154,7 @@ class MyCal: public ICalSup
 
 
 
-MyCal::MyCal() : m_ref ( 1 ), /*m_pICalBase ( NULL ),*/m_pUnknownInner(NULL)
+MyCal::MyCal() : m_ref ( 1 ), m_pICalBase ( NULL ),m_pUnknownInner(NULL)
 {
     InterlockedIncrement ( &g_cComponents );
 }
@@ -195,16 +195,16 @@ HRESULT STDMETHODCALLTYPE MyCal:: Init()
     
     else
     {
-		/*
-		hr=m_pUnknownInner->QueryInterface(IID_CALBASE,(void **)&m_pICalBase);
+		
+		hr=m_pUnknownInner->QueryInterface(IID_CALBASE,(void **)&m_pICalBase);//只是作为检验
 		if ( FAILED ( hr ) )
 		{
 			trace ( "con not create acc2 comp" );
-			m_pUnknownInner->Release();
+			m_pUnknownInner->Release();//关闭内部容器
 			return E_FAIL;
 		}
-		*/
-		//m_pUnknownOuter->Release();
+		
+		m_pICalBase->Release();
         return S_OK;
     }
 }
